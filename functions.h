@@ -624,6 +624,11 @@ void retrieve_token_list_from_file(token_t **token_list, FILE *binary_ptr){
         // Adiciona nó lido na lista.
         if ( *token_list == NULL ) {
             *token_list = new_node;
+            if ( new_node->next == NULL ){
+                new_node->prev = NULL;
+                new_node->next = NULL;
+                break;
+            }
             new_node->prev = NULL;
             new_node->next = NULL;
         }
