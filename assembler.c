@@ -14,7 +14,7 @@
 int main(int argc, char const *argv[]) {
 
     // Guarda nome do arquivo temporário para ser possível excluí-lo.
-    char temp[ MAX_IDENTIFIER_WIDTH + 10 ];
+    // char temp[ MAX_IDENTIFIER_WIDTH + 10 ];
 
     if ( valid_command(argc, argv) ){           // Teste de argumentos
         return 1;
@@ -30,15 +30,11 @@ int main(int argc, char const *argv[]) {
 
     else if ( !(strcmp(argv[1], "-m")) ) { // Expansão de macros
         pre_processamento(argv[2], argv[3]);
-        // processa_macros(argv[3]);
-        printf("\nExpansão de macros não funcionando :c \n");
-        printf("O programa será finalizado.\n\n");
+        processa_macros(argv[3]);
 
-        // Apaga arquivo *.pre.tmp
-        strcpy(temp, argv[3]);
-        remove(strcat(temp, ".pre.tmp"));
-
-        exit(1);
+        // // Apaga arquivo *.pre.tmp
+        // strcpy(temp, argv[3]);
+        // remove(strcat(temp, ".pre.tmp"));
 
         // // Apaga arquivo *.mnt.tmp
         // strcpy(temp, argv[3]);
@@ -47,21 +43,17 @@ int main(int argc, char const *argv[]) {
 
     else {                                      // Montagem
         pre_processamento(argv[2], argv[3]);
-        // processa_macros(argv[3]);
-        printf("\nExpansão de macros não funcionando :c \n");
-        printf("\nMontagem não implementada :C \n");
-        printf("O programa será finalizado.\n\n");
+        processa_macros(argv[3]);
         // montagem();             // FIXME
 
-        // Apaga arquivo *.pre.tmp
-        strcpy(temp, argv[3]);
-        remove(strcat(temp, ".pre.tmp"));
+        // // Apaga arquivo *.pre.tmp
+        // strcpy(temp, argv[3]);
+        // remove(strcat(temp, ".pre.tmp"));
 
         // // Apaga arquivo *.mnt.tmp
         // strcpy(temp, argv[3]);
         // remove(strcat(temp, ".mcr.tmp"));
 
-        exit(1);
     }
 
 

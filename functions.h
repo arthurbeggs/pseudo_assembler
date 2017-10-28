@@ -163,15 +163,15 @@ void retrieve_token_list_from_file(token_t **token_list, FILE *binary_ptr);
 
 // Insere novo label na MNT;
 // Retorna 0 em caso de sucesso e 1 se o símbolo já existir na tabela.
-int insert_label_into_macro_name_table(macro_name_table_t **macro_table, char *symbol, macro_name_table_t *table_node);
+int insert_label_into_macro_name_table(macro_name_table_t **macro_table, char *symbol, macro_name_table_t **table_node);
 
 
 // Insere nova linha de tokens na MDT.
-void insert_line_into_macro_def_table(macro_name_table_t **macro_name_node, token_t *token_list);
+void insert_line_into_macro_def_table(macro_name_table_t **macro_name_node, token_t **token_list);
 
 
 // Recupera entrada da MNT
-void retrieve_macro_from_table( macro_name_table_t *macro_table, char *symbol, macro_name_table_t *retrieved_node );
+void retrieve_macro_from_table( macro_name_table_t **macro_table, char *symbol, macro_name_table_t **retrieved_node );
 
 
 
@@ -654,7 +654,7 @@ void retrieve_token_list_from_file(token_t **token_list, FILE *binary_ptr){
 
 // Insere novo label na MNT;
 // Retorna 0 em caso de sucesso e 1 se o símbolo já existir na tabela.
-int insert_label_into_macro_name_table(macro_name_table_t **macro_table, char *symbol, macro_name_table_t *table_node){
+int insert_label_into_macro_name_table(macro_name_table_t **macro_table, char *symbol, macro_name_table_t **table_node){
 
     macro_name_table_t *temp, *hold;
     macro_name_table_t *new_node = (macro_name_table_t*) malloc( sizeof(macro_name_table_t) );
@@ -667,7 +667,7 @@ int insert_label_into_macro_name_table(macro_name_table_t **macro_table, char *s
 
     if ( temp == NULL ){
         // Insere novo símbolo na tabela.
-        *macro_table = table_node = new_node;
+        *macro_table = *table_node = new_node;
 
         return 0;
     }
@@ -682,26 +682,26 @@ int insert_label_into_macro_name_table(macro_name_table_t **macro_table, char *s
     }
 
     // Insere novo símbolo na tabela.
-    hold->next = table_node = new_node;
+    hold->next = *table_node = new_node;
 
     return 0;
 }
 
 
 // Insere nova linah de tokens na MDT;
-void insert_line_into_macro_def_table(macro_name_table_t **macro_name_node, token_t *token_list){
+void insert_line_into_macro_def_table(macro_name_table_t **macro_name_node, token_t **token_list){
 
     macro_def_table_t *temp, *hold;
-
-    macro_def_table_t *new_node = (macro_def_table_t*) malloc( sizeof(macro_def_table_t) );
-
-    new_node->next = NULL;
+    macro_def_table_t *new_node;
 
     if ( *macro_name_node == NULL ){
         printf("Erro! Nó da MNT vazio!\n");
         return;
     } // ERRO!
 
+    new_node = (macro_def_table_t*) malloc( sizeof(macro_def_table_t) );
+    new_node->macro_line = *token_list;
+    new_node->next = NULL;
 
     if ( ( temp = (*macro_name_node)->definition ) == NULL ) {
         (*macro_name_node)->definition = new_node;
@@ -719,16 +719,16 @@ void insert_line_into_macro_def_table(macro_name_table_t **macro_name_node, toke
 
 
 // Recupera entrada da MNT
-void retrieve_macro_from_table( macro_name_table_t *macro_table, char *symbol, macro_name_table_t *retrieved_node ){
+void retrieve_macro_from_table( macro_name_table_t **macro_table, char *symbol, macro_name_table_t **retrieved_node ){
 
     macro_name_table_t *temp;
 
-    temp = macro_table;
+    temp = *macro_table;
 
     // Procura se o símbolo já foi definido anteriormente.
     while ( temp ){
         if ( !( strcmp( temp->symbol, symbol ) ) ){
-            retrieved_node = temp;
+            *retrieved_node = temp;
             return;
         }
         temp = temp->next;

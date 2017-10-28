@@ -73,9 +73,9 @@ void processa_macros(char const *output_file){
 
     while ( !( feof(source_ptr) ) ) {
 
-        erase_token_list(&token_list);
+        temp = NULL;
+        token_list = NULL;
         retrieve_token_list_from_file(&token_list, source_ptr);
-
 
         // Testa se a linha atual é uma declaração de section
         if (   ( token_list->type == directive ) \
@@ -106,36 +106,34 @@ void processa_macros(char const *output_file){
             if ( insert_label_into_macro_name_table( \
                     &macro_table, \
                     token_list->token_identifier, \
-                    temp ) \
+                    &temp ) \
             ) {
                 printf( SYMBOL_REDEFINED, token_list->source_file_line );
+                goto case_break;
             }
 
-            else{
-                while ( !!( strcmp(token_list->token_identifier, "END") ) ){
+            while ( !!( strcmp(token_list->token_identifier, "END") ) ){
+                token_list = NULL;
+                retrieve_token_list_from_file(&token_list, source_ptr);
+
+                //TODO: Inserir condições de break
+                if ( ( !( strcmp(token_list->token_identifier, "END") ) ) ) {
                     erase_token_list(&token_list);
-                    retrieve_token_list_from_file(&token_list, source_ptr);
-
-                    //TODO: Inserir condições de break
-                    if ( ( !( strcmp(token_list->token_identifier, "END") ) ) ) {
-                        // erase_token_list(&token_list);
-                        break;
-                    }
-                    if ( feof(source_ptr) ){
-                        //TODO: Mensagem de erro
-                        break;
-                    }
-
-                    insert_line_into_macro_def_table( &temp, token_list );
+                    // token_list = NULL;
+                    break;
+                }
+                if ( feof(source_ptr) ){
+                    //TODO: Mensagem de erro
+                    break;
                 }
 
+                insert_line_into_macro_def_table( &temp, &token_list );
             }
-
         }
 
         // Substitui macro
         else if ( token_list->type == symbol ) {
-            retrieve_macro_from_table( macro_table, token_list->token_identifier, temp );
+            retrieve_macro_from_table( &macro_table, token_list->token_identifier, &temp );
             if ( temp != NULL ){
                 define_ptr = temp->definition;
 
@@ -145,13 +143,15 @@ void processa_macros(char const *output_file){
                     save_list_into_file(define_ptr->macro_line, binary_ptr);
                     define_ptr = define_ptr->next;
                 }
-                break; // Passa para a próxima iteração do loop
+                continue; // Passa para a próxima iteração do loop
             }
         }
 
+        case_break:
         if ( feof(source_ptr) ) break;
         // Escreve a lista no arquivo .mcr e salva a lista de tokens no arquivo binário.
         write_line_into_output(token_list, output_ptr);
+        fflush(output_ptr);
         save_list_into_file(token_list, binary_ptr);
     }
 
