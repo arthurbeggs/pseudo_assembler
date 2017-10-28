@@ -175,7 +175,6 @@ void processa_macros(char const *output_file){
 
     erase_macro_table(&macro_table);
 
-
     fclose (source_ptr);
     fclose (output_ptr);
     fclose (binary_ptr);
