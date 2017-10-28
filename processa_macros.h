@@ -94,6 +94,12 @@ void processa_macros(char const *output_file){
                 inside_text_section = 1;
                 inside_data_section = 0;
             }
+
+            // Seção inválida
+            else {
+                inside_text_section = 0;
+                inside_data_section = 0;
+            }
         }
 
         // Lê definições de macros
@@ -108,7 +114,21 @@ void processa_macros(char const *output_file){
                     token_list->token_identifier, \
                     &temp ) \
             ) {
-                printf( SYMBOL_REDEFINED, token_list->source_file_line );
+                printf( MACRO_REDEFINED, token_list->source_file_line );
+
+                // Apaga macro sem colocá-la na dabela de definições
+                while ( !!( strcmp(token_list->token_identifier, "END") ) ){
+                    erase_token_list(&token_list);
+                    retrieve_token_list_from_file(&token_list, source_ptr);
+
+                    if ( feof(source_ptr) ){
+                        printf( EOF_REACHED_BEFORE_END, temp->symbol );
+                        exit(1);
+                    }
+
+                    // Sem testes extras devido às definições da especificação.
+                }
+                erase_token_list(&token_list);
                 goto case_break;
             }
 
@@ -116,15 +136,14 @@ void processa_macros(char const *output_file){
                 token_list = NULL;
                 retrieve_token_list_from_file(&token_list, source_ptr);
 
-                //TODO: Inserir condições de break
                 if ( ( !( strcmp(token_list->token_identifier, "END") ) ) ) {
                     erase_token_list(&token_list);
-                    // token_list = NULL;
                     break;
                 }
+
                 if ( feof(source_ptr) ){
-                    //TODO: Mensagem de erro
-                    break;
+                    printf( EOF_REACHED_BEFORE_END, temp->symbol );
+                    exit(1);
                 }
 
                 insert_line_into_macro_def_table( &temp, &token_list );
@@ -151,11 +170,10 @@ void processa_macros(char const *output_file){
         if ( feof(source_ptr) ) break;
         // Escreve a lista no arquivo .mcr e salva a lista de tokens no arquivo binário.
         write_line_into_output(token_list, output_ptr);
-        fflush(output_ptr);
         save_list_into_file(token_list, binary_ptr);
     }
 
-    // erase_macro_table(macro_table); //TODO
+    erase_macro_table(&macro_table);
 
 
     fclose (source_ptr);

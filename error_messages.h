@@ -39,8 +39,10 @@ extensão .mcr .\n\n\
 #define SYMBOL_NOT_DECLARED "[ERRO SEMÂNTICO] Uso de símbolo indefinido na linha %d.\n" //declarações e rótulos ausentes;
 
 
-#define SYMBOL_REDEFINED "[ERRO SEMÂNTICO] Símbolo redefinido na linha %d. \
-O valor definido anteriormente foi sobrescrito.\n"
+#define SYMBOL_REDEFINED "[ERRO SEMÂNTICO] Símbolo redefinido na linha %d. O valor definido anteriormente foi sobrescrito.\n"
+
+
+#define MACRO_REDEFINED "[ERRO SEMÂNTICO] Macro redefinida na linha %d. A definição atual será ignorada.\n"
 
 
 #define EQU_TOO_MUCH_ARGUMENTS "[ERRO SINTÁTICO] Diretiva EQU com argumentos demais na linha %d. Os argumentos excedentes foram ignorados.\n"
@@ -94,6 +96,7 @@ O valor definido anteriormente foi sobrescrito.\n"
 #define MODIFICACAO_DE_UM_VALOR_CTE "[ERRO SEMÂNTICO] Modificação de um valor constante na linha %d. \n"// modificação de um valor constante;
 
 
+#define EOF_REACHED_BEFORE_END "[ERRO SINTÁTICO] O arquivo chegou ao fim sem encontrar a diretiva END da macro %s.\n\nO programa foi abortado com erros!\n"
 
 
 

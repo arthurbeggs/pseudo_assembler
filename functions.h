@@ -174,6 +174,8 @@ void insert_line_into_macro_def_table(macro_name_table_t **macro_name_node, toke
 void retrieve_macro_from_table( macro_name_table_t **macro_table, char *symbol, macro_name_table_t **retrieved_node );
 
 
+// Apaga a tabela de definições de macro, liberando memória.
+void erase_macro_table( macro_name_table_t **macro_table );
 
 
 
@@ -738,7 +740,27 @@ void retrieve_macro_from_table( macro_name_table_t **macro_table, char *symbol, 
 }
 
 
+// Apaga a tabela de definições de macro, liberando memória.
+void erase_macro_table( macro_name_table_t **macro_table ){
 
+    macro_name_table_t *temp_table;
+    macro_def_table_t  *temp_definition;
+
+    while ( *macro_table != NULL ){
+
+        temp_table = (*macro_table)->next;
+
+        while ( (*macro_table)->definition != NULL ){
+            temp_definition = (*macro_table)->definition->next;
+            erase_token_list(&((*macro_table)->definition->macro_line));
+            free((*macro_table)->definition);
+            (*macro_table)->definition = temp_definition;
+        }
+
+        free(*macro_table);
+        *macro_table = temp_table;
+    }
+}
 
 
 
